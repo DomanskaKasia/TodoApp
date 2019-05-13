@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">TODO APP</string>
+    <string name="action_settings">Settings</string>
+
+    <!--main-->
+    <string name="no_list_info">Nie masz żadnych zadań, dodaj zadanie klikając przycisk</string>
+    <string name="current_task">Nie masz żadnych zadań do wykonania</string>
+
+    <!--add_request-->
+    <string name="add_name_text">Nazwa:</string>
+    <string name="add_date_text">Data wykonania:</string>
+    <string name="add_category_text">Kategoria zadania:</string>
+    <string-array name="add_category_spinner">
+        <item>praca</item>
+        <item>zakupy</item>
+        <item>inne</item>
+    </string-array>
+    <string name="add_request_btn">Dodaj zadanie</string>
+    <string name="cancel_request_btn">Anuluj</string>
+    <string name="no_tasks_info">Nie masz żadnych zadań do wykonania, użyj przycisku + aby dodać zadanie.</string>
+</resources>
