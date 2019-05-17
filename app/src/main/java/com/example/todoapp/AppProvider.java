@@ -57,6 +57,7 @@ public class AppProvider extends ContentProvider {
 
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor cursor = queryBuilder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
+
         try {
             cursor.setNotificationUri(getContext().getContentResolver(), uri);
         } catch (NullPointerException e) {
