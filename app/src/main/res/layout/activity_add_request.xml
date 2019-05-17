@@ -58,7 +58,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:ems="10"
-        android:text="Dodaj datę"
+        android:text="@string/add_date_info"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_weight="2"
         app:layout_constraintStart_toStartOf="@+id/add_name"
@@ -93,6 +93,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:text="@string/add_request_btn"
+        android:background="@color/colorButton"
+        android:textColor="#ffffff"
+        android:paddingRight="16dp"
+        android:paddingLeft="16dp"
         app:layout_constraintEnd_toStartOf="@+id/cancel_adding_btn"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/add_category_spinner" />
@@ -103,6 +107,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:text="@string/cancel_request_btn"
+        android:background="@color/colorButton"
+        android:textColor="#ffffff"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/add_request_btn"
         app:layout_constraintTop_toBottomOf="@+id/add_category_spinner" />

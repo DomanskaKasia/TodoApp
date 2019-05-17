@@ -2,56 +2,43 @@
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
-
-    <CheckBox
-        android:id="@+id/todo_checkBox"
-        android:layout_width="32dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/todo_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:padding="0dp"
-        android:text="Zadanie pierwsze"
         android:textColor="?android:attr/textColorPrimary"
         android:textSize="18sp"
         app:layout_constraintEnd_toStartOf="@+id/delete_img"
-        app:layout_constraintStart_toEndOf="@+id/todo_checkBox"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/todo_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginStart="16dp"
         android:layout_marginBottom="16dp"
-        android:text="13/06/2019"
         android:textColor="?android:attr/textColorPrimary"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/todo_checkBox"
-        app:layout_constraintTop_toBottomOf="@+id/todo_name" />
+        app:layout_constraintStart_toEndOf="@+id/todo_category" />
 
-    <!--<TextView-->
-    <!--android:id="@+id/todo_category"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:text="inne"-->
-    <!--tools:layout_editor_absoluteX="239dp"-->
-    <!--tools:layout_editor_absoluteY="119dp" />-->
+    <TextView
+        android:id="@+id/todo_category"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
+        android:textColor="?android:attr/textColorPrimary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/todo_name"
+        app:layout_constraintTop_toBottomOf="@+id/todo_name" />
 
     <ImageButton
         android:id="@+id/delete_img"
