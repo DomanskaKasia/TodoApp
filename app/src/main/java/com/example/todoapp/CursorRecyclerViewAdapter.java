@@ -7,36 +7,39 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 class CursorRecyclerViewAdapter extends RecyclerView.Adapter<CursorRecyclerViewAdapter.TaskViewHolder> {
     private static final String TAG = "CursorRecyclerViewAdapt";
     private Cursor cursor;
+    private OnButtonClickListener listener;
 
-    public CursorRecyclerViewAdapter(Cursor cursor) {
+    public CursorRecyclerViewAdapter(Cursor cursor, OnButtonClickListener listener) {
         Log.d(TAG, "CursorRecyclerViewAdapt: constructor called");
         this.cursor = cursor;
+        this.listener = listener;
+    }
+
+    interface OnButtonClickListener {
+        void deleteClick(Task task);
     }
 
     static class TaskViewHolder extends RecyclerView.ViewHolder {
         private static final String TAG = "TaskViewHolder";
 
-        CheckBox checkBox = null;
-        TextView name = null;
-        TextView date = null;
-//        ImageButton editBtn = null;
-        ImageButton deleteBtn = null;
+        TextView name;
+        TextView date;
+        TextView category;
+        ImageButton deleteBtn;
 
-        public TaskViewHolder(@NonNull View itemView) {
+        private TaskViewHolder(@NonNull View itemView) {
             super(itemView);
             Log.d(TAG, "TaskViewHolder: constructor called");
 
-            this.checkBox = (CheckBox) itemView.findViewById(R.id.todo_checkBox);
             this.name = (TextView) itemView.findViewById(R.id.todo_name);
             this.date = (TextView) itemView.findViewById(R.id.todo_date);
-//            this.editBtn = (ImageButton) itemView.findViewById(R.id.edit_img);
+            this.category = (TextView) itemView.findViewById(R.id.todo_category);
             this.deleteBtn = (ImageButton) itemView.findViewById(R.id.delete_img);
         }
     }
@@ -44,28 +47,52 @@ class CursorRecyclerViewAdapter extends RecyclerView.Adapter<CursorRecyclerViewA
     @NonNull
     @Override
     public TaskViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        Log.d(TAG, "onCreateViewHolder: new view requested");
+        Log.d(TAG, "onCreateViewHolder: called");
         return new TaskViewHolder( LayoutInflater
                 .from(viewGroup.getContext())
                 .inflate(R.layout.content_main_list_detail, viewGroup, false) );
     }
 
     @Override
-    public void onBindViewHolder(@NonNull TaskViewHolder taskViewHolder, int i) {
+    public void onBindViewHolder(@NonNull TaskViewHolder holder, int i) {
         Log.d(TAG, "onBindViewHolder: starts");
 
         if((cursor == null) || cursor.getCount() == 0) {
-            taskViewHolder.checkBox.setVisibility(View.GONE);
-            taskViewHolder.name.setText(R.string.no_tasks_info);
-            taskViewHolder.deleteBtn.setVisibility(View.GONE);
+            holder.name.setText(R.string.no_tasks_info);
+            holder.date.setVisibility(View.GONE);
+            holder.category.setVisibility(View.GONE);
+            holder.deleteBtn.setVisibility(View.GONE);
         } else {
             if(!cursor.moveToPosition(i)) {
                 throw new IllegalStateException("Couldn't move cursor to position " + i);
             }
-            taskViewHolder.checkBox.setVisibility(View.VISIBLE);
-            taskViewHolder.name.setText(cursor.getString(cursor.getColumnIndex(TasksTable.Column.NAME)));
-            taskViewHolder.date.setText(cursor.getString(cursor.getColumnIndex(TasksTable.Column.END_DATE)));
-            taskViewHolder.deleteBtn.setVisibility(View.VISIBLE); //todo onclicklistener
+
+            final String name = cursor.getString(cursor.getColumnIndex(TasksTable.Column.NAME));
+            String date = cursor.getString(cursor.getColumnIndex(TasksTable.Column.END_DATE));
+            String category = cursor.getString(cursor.getColumnIndex(TasksTable.Column.CATEGORY));
+
+            final Task task = new Task( cursor.getInt(cursor.getColumnIndex(TasksTable.Column._ID)),
+                                name,
+                                date,
+                                category);
+
+            holder.name.setText(name);
+            holder.date.setText(date);
+            holder.category.setText(category);
+            holder.category.setBackgroundColor(1);
+            holder.deleteBtn.setVisibility(View.VISIBLE);
+
+            final View.OnClickListener onClickListener = new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.d(TAG, "onClick: button " + name + " clicked");
+                    if(listener != null) {
+                        listener.deleteClick(task);
+                    }
+                }
+            };
+
+            holder.deleteBtn.setOnClickListener(onClickListener);
         }
     }
 
@@ -78,7 +105,7 @@ class CursorRecyclerViewAdapter extends RecyclerView.Adapter<CursorRecyclerViewA
         return cursor.getCount();
     }
 
-    //todo dodac komentarz
+    //return the old cursor or null
     Cursor swapCursor(Cursor newCursor) {
         if(newCursor == cursor) {
             return null;

@@ -1,6 +1,5 @@
 package com.example.todoapp;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -9,8 +8,8 @@ import android.util.Log;
 class AppDatabase extends SQLiteOpenHelper {
     private static final String TAG = "Database";
 
-    public static final String DB_NAME = "todo.db";
-    public static final int DB_VERSION = 1;
+    private static final String DB_NAME = "todo.db";
+    private static final int DB_VERSION = 1;
 
     //singleton implementation
     private static AppDatabase instance = null;
@@ -41,9 +40,6 @@ class AppDatabase extends SQLiteOpenHelper {
                 TasksTable.Column.CATEGORY + " TEXT NOT NULL);";
         Log.d(TAG, sql);
         db.execSQL(sql);
-        insertTodo(db, "Aplikacja todo list", "13.06.2019", "praca");
-        insertTodo(db, "Kupić Jogurt", "18.06.2019", "zakupy");
-        insertTodo(db, "Napisać list", "30.06.2019", "inne");
 
         Log.d(TAG, "onCreate: ends");
     }
@@ -58,17 +54,5 @@ class AppDatabase extends SQLiteOpenHelper {
                 throw new IllegalStateException("Unknown new version " + newVersion);
         }
         Log.d(TAG, "onUpgrade: ends");
-    }
-
-    public static void insertTodo(SQLiteDatabase db, String name, String data, String category) {
-        Log.d(TAG, "insertTodo: starts");
-
-        ContentValues t = new ContentValues();
-        t.put(TasksTable.Column.NAME, name);
-        t.put(TasksTable.Column.END_DATE, data);
-        t.put(TasksTable.Column.CATEGORY, category);
-        db.insert(TasksTable.TABLE_NAME, null, t);
-
-        Log.d(TAG, "insertTodo: ends");
     }
 }

@@ -56,7 +56,14 @@ public class AppProvider extends ContentProvider {
         }
 
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        return queryBuilder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
+        Cursor cursor = queryBuilder.query(db, projection, selection, selectionArgs, null, null, sortOrder);
+        try {
+            cursor.setNotificationUri(getContext().getContentResolver(), uri);
+        } catch (NullPointerException e) {
+            Log.d(TAG, "query: cannot get content resolver");
+        }
+
+        return cursor;
     }
 
     @Override
@@ -85,8 +92,7 @@ public class AppProvider extends ContentProvider {
         Uri newUri;
         long recordId;
 
-        switch (match) { //todo zmianić w if, bo po co switch
-            case TASKS:
+        if(match == TASKS) {
                 db = dbHelper.getWritableDatabase();
                 recordId = db.insert(TasksTable.TABLE_NAME, null, values);
                 if(recordId >= 0) {
@@ -94,10 +100,15 @@ public class AppProvider extends ContentProvider {
                 } else {
                     throw new android.database.SQLException("Failed to insert into " + uri.toString());
                 }
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown uri " + uri);
+        } else {
+            throw new IllegalArgumentException("Unknown uri " + uri);
         }
+
+        if(recordId >= 0) {
+            Log.d(TAG, "insert: setting notify change with " + uri);
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+
         Log.d(TAG, "insert: return uri " + newUri);
         return newUri;
     }
@@ -110,7 +121,7 @@ public class AppProvider extends ContentProvider {
 
         final SQLiteDatabase db;
         int count;
-        String criteria;
+        StringBuilder criteria;
 
         switch (match) {
             case TASKS:
@@ -120,19 +131,24 @@ public class AppProvider extends ContentProvider {
             case TASKS_ID:
                 db = dbHelper.getWritableDatabase();
                 long taskId = TasksTable.getTaskId(uri);
-                criteria = TasksTable.Column._ID + " = " + taskId;
+                criteria = new StringBuilder(TasksTable.Column._ID + " = " + taskId);
 
                 if(selection != null && selection.length() > 0) {
-                    criteria += " AND (" + selection + ")"; //todo stringbuilder?
+                    criteria.append(" AND (" + selection + ")");
                 }
 
-                count = db.delete(TasksTable.TABLE_NAME, criteria, selectionArgs);
+                count = db.delete(TasksTable.TABLE_NAME, criteria.toString(), selectionArgs);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown uri: " + uri);
         }
 
-        Log.d(TAG, "update: return count " + count);
+        if(count > 0) {
+            Log.d(TAG, "delete: setting notify change with " + uri);
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+
+        Log.d(TAG, "delete: return count " + count);
         return count;
     }
 
@@ -144,7 +160,7 @@ public class AppProvider extends ContentProvider {
 
         final SQLiteDatabase db;
         int count;
-        String criteria;
+        StringBuilder criteria;
 
         switch (match) {
             case TASKS:
@@ -154,16 +170,21 @@ public class AppProvider extends ContentProvider {
             case TASKS_ID:
                 db = dbHelper.getWritableDatabase();
                 long taskId = TasksTable.getTaskId(uri);
-                criteria = TasksTable.Column._ID + " = " + taskId;
+                criteria = new StringBuilder(TasksTable.Column._ID + " = " + taskId);
 
                 if(selection != null && selection.length() > 0) {
-                    criteria += " AND (" + selection + ")"; //todo stringbuilder?
+                    criteria.append(" AND (" + selection + ")");
                 }
 
-                count = db.update(TasksTable.TABLE_NAME, values, criteria, selectionArgs);
+                count = db.update(TasksTable.TABLE_NAME, values, criteria.toString(), selectionArgs);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown uri: " + uri);
+        }
+
+        if(count > 0) {
+            Log.d(TAG, "update: setting notify change with " + uri);
+            getContext().getContentResolver().notifyChange(uri, null);
         }
 
         Log.d(TAG, "update: return count " + count);
